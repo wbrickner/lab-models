@@ -8,13 +8,14 @@ holeSeperation = 2;
 lengthPadding = 10;
 breadthPadding = 5;
 interrowDistance = 25;
-tubeHoldLedgeThickness = 5;
+tubeHoldLedgeThickness = 2.25;
 tubeHoldGapHeight = 15;
 tubeHoldGapBreadth = 12;
-bottomLedgeThickness = 5;
+bottomLedgeThickness = 2.5;
 insetLengthPadding = 3;
 insetThicknessPadding = 2.5;
 insetDepth = 3.5;
+borderRadius = 2.5;
 
 // computed values
 effectiveLength = 2*lengthPadding + (numberOfHoles * holeRadius * 2) + (numberOfHoles - 1)*holeSeperation;
@@ -25,7 +26,39 @@ echo(effectiveLength);
 
 difference() {
     // main body
-    cube([effectiveLength, effectiveBreadth, effectiveThickness]);
+    union() {
+        difference() {
+            cube([effectiveLength, effectiveBreadth, effectiveThickness]);
+            
+            // cut out long thin cubes, to be replaced by rounded edges
+            translate([0, 0, 0]) {
+                cube([borderRadius, borderRadius, effectiveThickness]);
+            }
+            translate([effectiveLength - borderRadius, 0, 0]) {
+                cube([borderRadius, borderRadius, effectiveThickness]);
+            }
+            translate([0, effectiveBreadth - borderRadius, 0]) {
+                cube([borderRadius, borderRadius, effectiveThickness]);
+            }
+            translate([effectiveLength - borderRadius, effectiveBreadth - borderRadius, 0]) {
+                cube([borderRadius, borderRadius, effectiveThickness]);
+            }
+        }
+        
+        // rounded edges
+        translate([borderRadius, borderRadius, 0]) {
+            cylinder(r = borderRadius, h = effectiveThickness, $fn=global_fn);
+        }
+        translate([effectiveLength - borderRadius, borderRadius, 0]) {
+            cylinder(r = borderRadius, h = effectiveThickness, $fn=global_fn);
+        }
+        translate([borderRadius, effectiveBreadth - borderRadius, 0]) {
+            cylinder(r = borderRadius, h = effectiveThickness, $fn=global_fn);
+        }
+        translate([effectiveLength - borderRadius, effectiveBreadth - borderRadius, 0]) {
+            cylinder(r = borderRadius, h = effectiveThickness, $fn=global_fn);
+        }
+    }
 
     // top row
     for (j = [0:numberOfHoles - 1]) {
@@ -52,12 +85,12 @@ difference() {
     }
     
     // top row's inset
-    translate([insetLengthPadding, effectiveBreadth - tubeHoldGapBreadth - insetDepth, bottomLedgeThickness + insetThicknessPadding]) {
+    translate([insetLengthPadding, effectiveBreadth - tubeHoldGapBreadth - insetDepth, bottomLedgeThickness + 2*insetThicknessPadding]) {
         cube([effectiveLength - 2*insetLengthPadding, insetDepth, effectiveThickness - bottomLedgeThickness - tubeHoldLedgeThickness - 2*insetThicknessPadding]);
     }
     
     // bottom row's inset
-    translate([insetLengthPadding, tubeHoldGapBreadth, bottomLedgeThickness + insetThicknessPadding]) {
+    translate([insetLengthPadding, tubeHoldGapBreadth, bottomLedgeThickness + 2*insetThicknessPadding]) {
         cube([effectiveLength - 2*insetLengthPadding, insetDepth, effectiveThickness - bottomLedgeThickness - tubeHoldLedgeThickness - 2*insetThicknessPadding]);
     }
 }
