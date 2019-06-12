@@ -8,6 +8,6 @@ Feel free to use these models in your workspace.
 
 Models:
 
-- Rack 
-	- space for magnets (to act on the fluid and suspended particles inside the tubes)
+- Rack [ [STL](https://github.com/wbrickner/lab-models/blob/master/models/rack/rack.stl) ]
+	- Space for magnets (to act on the fluid and suspended particles inside the tubes)
 
